@@ -215,11 +215,16 @@ public class Teflon {
             // Get current package JSON (getPkgRatings)
             getPackageRatings(packageName);
             // Get current package related links (getPkgLinks)
-            String[] packageLinks = getPackageLinks(packageName);
-            // Get next package rating (random value)
-            propogate(packageLinks[nextPackageIndex]);
+            try{
+                String[] packageLinks = getPackageLinks(packageName);
+           
+                // Get next package rating (random value)
+                propogate(packageLinks[nextPackageIndex]);
             
-            
+             } catch (Exception e){
+                
+                debug(e.toString());
+            }
             
             
             /* Get package link names and add to list for future use
