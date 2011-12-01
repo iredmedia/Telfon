@@ -204,76 +204,29 @@ public class Teflon {
              
         public JSONObject propogate(String packageName){
             
-            // Define variables
-            
-            JSONObject output = null;
-            
-            Random r = new Random();
-            
+            JSONObject JSONReturn;
             
             // Get current package JSON output (getPkgRatings)
             parseMe(getPackageRatings(packageName));
+            
             // Get current package related links (getPkgLinks)
             String[] packageLinks = getPackageLinks(packageName);
-            
-            // Get next package rating ( from random value)
-            //int nextPackageIndex = r.nextInt(8);
-            
-            debug("Global: "+GLOBAL__COUNTER + "    "+GLOBAL__COUNTER);
-            
+             
             GLOBAL__COUNTER++;
             
             if(packageLinks[GLOBAL__COUNTER] == null){
             
                 GLOBAL__COUNTER= 0;
-                propogate(packageLinks[GLOBAL__COUNTER]);
+                JSONReturn = propogate(packageLinks[GLOBAL__COUNTER]);
 
             }
             else{
             
-                propogate(packageLinks[GLOBAL__COUNTER]);
+                JSONReturn = propogate(packageLinks[GLOBAL__COUNTER]);
             
             }
             
-            
-            /* Get package link names and add to list for future use
-            for(int i = 0; i < packageLinks.length; i++){ 
-                                
-                // Add all items to list
-                listToVisit.add(packageLinks[i]);
-                debug(listToVisit.getItem(i));
-                   
-            }
-            debug("Done list population");
-            */
-            
-            
-            /*
-            if (listVisited.getItemCount() == 0){ // first run, visited list is empty
-                
-                listVisited.add(packageName); // add current item to "past" visits ( do not revisit )
-
-                output = getPackageRatings(packageName); 
-                debug(getPackageRatings(packageName).toString()); // Display JSON ratings
-                    
-            }
-            else{
-            
-                
-                for(int i=0; i < listToVisit.getItemCount(); i++){ // Find match?
-                
-                    
-                    
-                
-                }
-                
-                return output;
-
-            
-            }
-            */
-            
-            return output;
+            return JSONReturn;
         }        
         
         // Method to send to database
