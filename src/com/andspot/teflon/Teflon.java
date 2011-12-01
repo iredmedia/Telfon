@@ -32,7 +32,7 @@ import com.andspot.jsonk.JSONObject;
 import java.awt.List;
 
 public class Teflon {
-	
+        int GLOBAL__COUNTER = 0;
         public List listVisited = new List();
         public List listToVisit = new List(); 
      
@@ -178,7 +178,7 @@ public class Teflon {
                         b.get(0).text();
 
                 JSONObject jb = new JSONObject();
-
+                
                 jb.put("RATING", rating);
                 jb.put("VOTES", votes);
                 jb.put("APPNAME", appName);
@@ -193,8 +193,7 @@ public class Teflon {
                 jb.put("CONTENTRATING", contentRating);
                 jb.put("VERSION", version);
                 jb.put("FILESIZE", filesize);
-                // Output json value debug
-                debug("Found package: " + jb.toString());
+                
                 return jb;
 
             } catch(Exception e){}
@@ -210,16 +209,31 @@ public class Teflon {
             JSONObject output = null;
             
             Random r = new Random();
-            int nextPackageIndex = r.nextInt(10);
             
-            // Get current package JSON (getPkgRatings)
-            getPackageRatings(packageName);
+            
+            // Get current package JSON output (getPkgRatings)
+            parseMe(getPackageRatings(packageName));
             // Get current package related links (getPkgLinks)
             String[] packageLinks = getPackageLinks(packageName);
-            // Get next package rating (random value)
-            propogate(packageLinks[nextPackageIndex]);
             
+            // Get next package rating ( from random value)
+            //int nextPackageIndex = r.nextInt(8);
             
+            debug("Global: "+GLOBAL__COUNTER + "    "+GLOBAL__COUNTER);
+            
+            GLOBAL__COUNTER++;
+            
+            if(packageLinks[GLOBAL__COUNTER] == null){
+            
+                GLOBAL__COUNTER= 0;
+                propogate(packageLinks[GLOBAL__COUNTER]);
+
+            }
+            else{
+            
+                propogate(packageLinks[GLOBAL__COUNTER]);
+            
+            }
             
             
             /* Get package link names and add to list for future use
@@ -260,21 +274,14 @@ public class Teflon {
             */
             
             return output;
+        }        
+        
+        // Method to send to database
+	public String parseMe(JSONObject jsonObject){
+            String returnStr = jsonObject.toString();
+            debug("Found record: " + returnStr);
+            return returnStr;
         }
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-	
      
         
 	public String getVersionNumber(String aaptOutput){
