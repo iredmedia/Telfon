@@ -16,15 +16,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-//import org.w3c.tidy.Tidy;
-//
-//import com.amazonaws.auth.AWSCredentials;
-//import com.amazonaws.auth.BasicAWSCredentials;
-//import com.amazonaws.auth.PropertiesCredentials;
-//import com.amazonaws.services.s3.AmazonS3;
-//import com.amazonaws.services.s3.AmazonS3Client;
-//import com.amazonaws.services.s3.model.PutObjectRequest;
-
 import com.andspot.jsonk.JSONArray;
 import com.andspot.jsonk.JSONException;
 import com.andspot.jsonk.JSONObject;
@@ -32,18 +23,52 @@ import com.andspot.jsonk.JSONObject;
 import java.awt.List;
 
 public class Teflon {
+    
         int GLOBAL__COUNTER = 0;
+    
         public List listVisited = new List();
         public List listToVisit = new List(); 
-     
-        // takes package URL and returns JSON object containing ratings & values from package market page
-        public JSONObject getRatingsByUrl(String url) throws JSONException{
-            
-            String packagename = url.replace("https://market.android.com/details?id=", "").split("&")[0];
-            return propogate(packagename);	
-            
-	}
+                    int packageCounter = 0;
+
         
+        // takes id, cat, and returns list of package names
+        public String getTopPackages(String id, String cat, int start,int num){ // Retrieve document structure by package name
+            
+            
+            
+            URL u;
+            Document document = null;
+            String returnStrArray[] = null;
+            
+            try{
+                
+                u = new URL("https://market.android.com/details?id=" + id + "&cat=" + cat.toUpperCase()+"&start="+start+"&num="+num);
+                document = Jsoup.parse(u,90000);
+                
+                Elements els = document.getElementsByClass("thumbnail"); // Elements to gather
+                returnStrArray = new String[els.size()]; // Return
+                
+                for(int i = 0; i < els.size(); i++){
+                    returnStrArray[i] = getPackageName(els, i);
+                    packageCounter++;
+                    System.out.println(packageCounter);
+                }
+                
+                
+                
+            }
+            catch(Exception e){
+            return null;
+            }
+            
+//            debug(returnStrArray);
+            
+            return ""; 
+            
+        }
+        
+        
+       
         // takes package name and returns entire HTML document for this particular package (incl related links & ratings)
         public Document getDocument(String packageName){ // Retrieve document structure by package name
             
@@ -62,6 +87,21 @@ public class Teflon {
             
         }
         
+        
+          // takes package URL and returns JSON object containing ratings & values from package market page
+        public JSONObject getRatingsByUrl(String url) throws JSONException{
+            
+            String packagename = url.replace("https://market.android.com/details?id=", "").split("&")[0];
+            return propogate(packagename);	
+            
+	}
+       
+        public String getPackageName(Elements el, int i){
+            
+            return el.get(i).attr("href").replace("/details?id=", "").split("&")[0];
+                
+        }
+        
         // takes package name and returns list of elements containing all package links on market page
         public String[] getPackageLinks(String packageName){ // Find all related links on page
             
@@ -72,7 +112,7 @@ public class Teflon {
             
             // Return list of links as package name
             for(int i = 0; i < el.size(); i++){
-                attr = el.get(i).attr("href").replace("/details?id=", "").split("&")[0];; 
+                attr = getPackageName(el, i);
                 returnStrArray[i] = attr;
             }
             
@@ -235,21 +275,7 @@ public class Teflon {
             debug("Found record: " + returnStr);
             return returnStr;
         }
-     
-        
-	public String getVersionNumber(String aaptOutput){
-
-            int x, y;
-            String sdkVersion;
-            
-            x = aaptOutput.indexOf("sdkVersion:'")+12;
-            y = aaptOutput.indexOf("'", x);
-            
-            sdkVersion = aaptOutput.substring(x, y);
-
-            return sdkVersion;
-	}
-        
+      
         /* Helper classes */
         public String debug(String toOutput){
             String message = null;
@@ -269,9 +295,11 @@ public class Teflon {
             String message = null;
             for(int i = 0; i < toOutput.length; i++){
                 
-                message += toOutput[i] + "\r";
+                message += toOutput[i] + "\n";
             
             }
+            
+            System.out.print(message);
             return message;
         }
 }
